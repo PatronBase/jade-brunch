@@ -65,13 +65,15 @@ class JadeCompiler {
     return new Promise((resolve, reject) => {
       let result, error;
       try {
-        let compiled;
+        let preprocessed, compiled;
+        // pre process source code
+        preprocessed = typeof options.preProcess == 'function' ? options.preProcess(data) : data;
         // cloning is mandatory because Jade changes it
         if (options.preCompile === true) {
-          const precompiled = jade.compile(data, options)();
+          const precompiled = jade.compile(preprocessed, options)();
           compiled = JSON.stringify(precompiled);
         } else {
-          compiled = jade.compileClient(data, options);
+          compiled = jade.compileClient(preprocessed, options);
         }
         result = umd(compiled);
       } catch (_error) {
